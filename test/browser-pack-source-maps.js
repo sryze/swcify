@@ -2,7 +2,7 @@ var browserify = require('browserify');
 var convert = require('convert-source-map');
 var path = require('path');
 var zipObject = require('lodash.zipobject');
-var test = require('tap').test;
+var test = require('tape');
 var babelify = require('../');
 
 // Validate assumptions about browserify's browser-pack source maps. Without

@@ -1,7 +1,7 @@
 var browserify = require('browserify');
 var path = require('path');
-var test = require('tap').test;
-var babelify = require('../');
+var test = require('tape');
+var swcify = require('../');
 
 var files = [
   path.join(__dirname, 'bundle/a.js'),
@@ -13,16 +13,16 @@ var files = [
 test('event', function (t) {
   t.plan(7);
 
-  var babelified = [];
+  var swcified = [];
 
   var b = browserify(path.join(__dirname, 'bundle/index.js'));
-  b.transform([babelify, {presets: ['@babel/preset-env']}]);
+  b.transform([swcify, {}]);
 
   b.on('transform', function(tr) {
-    if (tr instanceof babelify) {
-      tr.once('babelify', function(result, filename) {
-        babelified.push(filename);
-        t.type(result.code, 'string');
+    if (tr instanceof swcify) {
+      tr.once('swcify', function(result, filename) {
+        swcified.push(filename);
+        t.equal(typeof result.code, 'string');
       });
     }
   });
@@ -30,6 +30,6 @@ test('event', function (t) {
   b.bundle(function (err, src) {
     t.error(err);
     t.ok(src);
-    t.match(babelified.sort(), files);
+    t.deepEqual(swcified.sort(), files);
   });
 });

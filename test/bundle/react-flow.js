@@ -1,10 +1,10 @@
 module.exports = (React) => {
   var TestComponent = React.createClass({
-    envLength(): number {
+    envLength() {
       return process.env.NODE_ENV.length;
     },
     render() {
-      return <div />;
+      return <div/>;
     }
   });
   return TestComponent;

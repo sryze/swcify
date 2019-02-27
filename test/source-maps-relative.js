@@ -3,7 +3,7 @@ var convert = require('convert-source-map');
 var fs = require('fs');
 var path = require('path');
 var zipObject = require('lodash.zipobject');
-var test = require('tap').test;
+var test = require('tape');
 var babelify = require('../');
 
 process.chdir(path.join(__dirname, '..'));

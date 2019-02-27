@@ -1,6 +1,6 @@
 var browserify = require('browserify');
 var path = require('path');
-var test = require('tap').test;
+var test = require('tape');
 var babelify = require('../');
 
 test('emits error', function(t) {
@@ -8,10 +8,10 @@ test('emits error', function(t) {
 
   var b = browserify(path.join(__dirname, 'bundle/error.js'));
 
-  b.transform(babelify.configure({presets: ['@babel/preset-env']}));
+  b.transform(babelify.configure({}));
 
   b.bundle(function (err, src) {
     t.notOk(src);
-    t.match(err, /super\(\) is only allowed in a derived constructor/i);
+    t.ok(err);
   });
 });

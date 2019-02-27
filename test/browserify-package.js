@@ -1,6 +1,6 @@
 var browserify = require('browserify');
 var path = require('path');
-var test = require('tap').test;
+var test = require('tape');
 var vm = require('vm');
 
 test('browserify package', function (t) {
