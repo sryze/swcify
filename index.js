@@ -5,7 +5,46 @@ var util   = require("util");
 var path   = require("path");
 var swc = require("@swc/core");
 var fs = require("fs");
-var defatuls = require("./config");
+
+var defatuls = {
+  "jsc": {
+    "parser": {
+      "syntax": "ecmascript",
+      "jsx": true,
+      "numericSeparator": false,
+      "classPrivateProperty": true,
+      "privateMethod": false,
+      "classProperty": true,
+      "functionBind": false,
+      "decorators": false,
+      "decoratorsBeforeExport": false
+    },
+    "target": "es2016",
+    "transform": {
+      "react": {
+        "pragma": "React.createElement",
+        "pragmaFrag": "React.Fragment",
+        "throwIfNamespace": true,
+        "development": false,
+        "useBuiltins": false
+      },
+      "optimizer": {
+        "globals": {
+          "vars": {
+            "__DEBUG__": "true"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "type": "commonjs",
+    "strict": false,
+    "strictMode": true,
+    "lazy": false,
+    "noInterop": false
+  }
+}
 
 module.exports = buildTransform();
 module.exports.configure = buildTransform;
