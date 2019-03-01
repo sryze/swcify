@@ -3,7 +3,7 @@ var convert = require('convert-source-map');
 var path = require('path');
 var zipObject = require('lodash.zipobject');
 var test = require('tape');
-var babelify = require('../');
+var swcify = require('../');
 
 // Validate assumptions about browserify's browser-pack source maps. Without
 // intermediate source maps, the source is a relative path from the "basedir".
@@ -20,8 +20,8 @@ test('browserify source maps (no basedir)', function(t) {
     debug: true
   });
 
-  b.transform(babelify, {
-    presets: ['@babel/preset-env'],
+  b.transform(swcify, {
+    // presets: ['@babel/preset-env'],
     sourceMaps: false   // no intermediate source maps
   });
 
@@ -54,7 +54,7 @@ test('browserify source maps (no basedir)', function(t) {
       sm.sourcesContent
     );
 
-    t.match(sort(smDeps), sort(deps));
+    t.deepEqual(sort(smDeps), sort(deps));
   });
 });
 
@@ -70,8 +70,8 @@ test('browserify source maps (with basedir)', function(t) {
     debug: true
   });
 
-  b.transform(babelify, {
-    presets: ['@babel/preset-env'],
+  b.transform(swcify, {
+    // presets: ['@babel/preset-env'],
     sourceMaps: false   // no intermediate source maps
   });
 
@@ -104,7 +104,7 @@ test('browserify source maps (with basedir)', function(t) {
       sm.sourcesContent
     );
 
-    t.match(sort(smDeps), sort(deps));
+    t.deepEqual(sort(smDeps), sort(deps));
   });
 });
 

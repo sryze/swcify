@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
-    "@swc/core": "^1.0.25",
+    "@swc/core": "^1.0.28",
     "browserify": "^16.2.3",
     "convert-source-map": "^1.5.1",
     "cross-spawn": "^6.0.5",
@@ -29,7 +29,5 @@
   },
   "scripts": {
     "test": "tape test/*.js"
-  },
-  "dependencies": {
   }
 }

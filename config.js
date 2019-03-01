@@ -1,5 +1,6 @@
 module.exports = {
   jsc: {
+    target: "es5",
     parser: {
       syntax: "ecmascript",
       jsx: true,
@@ -34,5 +35,7 @@ module.exports = {
     strictMode: true,
     lazy: false,
     noInterop: false
-  }
+  },
+  minify: false
 }
+

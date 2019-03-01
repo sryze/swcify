@@ -4,7 +4,7 @@ var path = require('path');
 var vm = require('vm');
 var swcify = require('../');
 
-test.skip('aaa', function (t) {
+test('aaa', function (t) {
   t.plan(2);
 
   var b = browserify();
@@ -21,7 +21,7 @@ test.skip('aaa', function (t) {
   });
 });
 
-test.only('basedir', function (t) {
+test('basedir', function (t) {
    t.plan(2);
 
   var b = browserify({basedir: __dirname});

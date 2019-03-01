@@ -7,9 +7,12 @@ var swc = require("@swc/core");
 var fs = require("fs");
 var defatuls = require("./config");
 
-
 module.exports = buildTransform();
 module.exports.configure = buildTransform;
+
+
+// TODO: essentially we have to handle all CLI-tool options
+// some of them are taken from browserify flags
 
 // Allow projects to import this module and check `foo instanceof swcify`
 // to see if the current stream they are working with is one created
@@ -21,6 +24,8 @@ Object.defineProperty(module.exports, Symbol.hasInstance, {
 });
 
 function buildTransform(opts) {
+  var configCache = {}
+
   return function (filename, config) {
 
     var _flags = config._flags || {}
@@ -33,21 +38,28 @@ function buildTransform(opts) {
     }
 
     var basedir = path.resolve(_flags.basedir || ".");
-    try {
+    var configPath = path.resolve(basedir, '.swcrc');
+
+    var configJSON, parsedConfig = configCache[configPath];
+
+    // if no cached config found - try to read from file
+    if (!parsedConfig && fs.existsSync(configPath)) {
       // read filepath config
       // read .swcrc relative to basedir
       // Browserify doesn't actually always normalize the filename passed
       // to transforms, so we manually ensure that the filename is relative
-      var configPath = path.resolve(basedir, '.swcrc');
-      var configJSON = fs.readFileSync(configPath, 'utf-8')
-      var parsedConfig = JSON.parse(configJSON)
-      config = Object.assign({}, defatuls, opts, parsedConfig, config)
+      configJSON = fs.readFileSync(configPath, 'utf-8');
+      // bad config will throw error
+      parsedConfig = JSON.parse(configJSON)
+      configCache[configPath] = parsedConfig
     }
-    catch (e) {
-      // no config found, falling back to default options
-      // create current config from options extended with the config
-      config = Object.assign({}, defatuls, opts, config)
-    }
+
+    // no config found, falling back to default options
+    // create current config from options extended with the config
+    config = Object.assign({}, defatuls, opts, parsedConfig, config)
+
+    // normalize config quirks
+    if (!config.sourceMaps) delete config.sourceMaps
 
     return new SwcifyStream({
       config: config,
@@ -67,16 +79,14 @@ class SwcifyStream extends stream.Transform {
 
   _transform(buf, enc, callback) {
     var self = this
-    transform(buf.toString(), this._opts.config, function(err, result) {
-      if (err) callback(err)
-      else {
-        var code = result !== null ? result.code : data;
-        self.push(code);
-        self._code.push(code);
-        self._sourceMap.push(result && result.map)
-        callback();
-      }
-    })
+
+    swc.transform(buf.toString(), this._opts.config).then(function(result) {
+      var code = result !== null ? result.code : data;
+      self.push(code);
+      self._code.push(code);
+      self._sourceMap.push(result && result.map)
+      callback();
+    }, callback)
   }
 
   _flush(callback) {
@@ -88,10 +98,4 @@ class SwcifyStream extends stream.Transform {
     }, this._opts.filename);
     callback()
   }
-}
-
-function transform(data, opts, done) {
-  swc.transform(data, opts).then(function (data) {
-    done(null, data)
-  }, done);
 }

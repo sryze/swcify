@@ -14,7 +14,7 @@ test('passes options via configure', function(t) {
 
   b.bundle(function (err, src) {
     t.error(err);
-    t.ok(src.toString().match(/'catch': `catch`/));
-    t.ok(src.toString().match(/'delete': `delete`/));
+    t.ok(src.toString().match(/'?catch'?: `catch`/));
+    t.ok(src.toString().match(/'?delete'?: `delete`/));
   });
 });

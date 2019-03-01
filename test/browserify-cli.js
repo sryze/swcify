@@ -3,7 +3,7 @@ var spawn = require('cross-spawn');
 var test = require('tape');
 var vm = require('vm');
 
-test.only('browserify-cli no subargs', function (t) {
+test('browserify-cli no subargs', function (t) {
   t.plan(5);
 
   var cmd = require.resolve('browserify/bin/cmd.js');
@@ -28,12 +28,12 @@ test.only('browserify-cli no subargs', function (t) {
     vm.runInNewContext(out, c);
 
     t.equal(c.require('bundle').a, 'a is for apple');
-    t.ok(out.toString().match(/'catch': `catch`/));
-    t.ok(out.toString().match(/'delete': `delete`/));
+    t.ok(out.toString().match(/'?catch'?: `catch`/));
+    t.ok(out.toString().match(/'?delete'?: `delete`/));
   });
 });
 
-test('browserify-cli with subargs', function (t) {
+test.skip('browserify-cli with subargs', function (t) {
   // FIXME: react-flow is not supported for now
 
   t.plan(4);
@@ -50,7 +50,7 @@ test('browserify-cli with subargs', function (t) {
       //   '@swc/plugin-transform-react-display-name',
       //   'transform-node-env-inline',
       // ']',
-      '--config=123',
+      // '--config=123',
     ']'
   ];
 
