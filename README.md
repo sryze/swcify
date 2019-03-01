@@ -1,6 +1,6 @@
 # swcify [![Build Status](https://travis-ci.org/dy/swcify.svg?branch=master)](https://travis-ci.org/dy/swcify)
 
-[SWC](https://github.com/swc-project/swc) [browserify](https://github.com/substack/node-browserify) transform. Enables ES6/JSX/react for browserify 16x times faster than babelify.
+[SWC](https://github.com/swc-project/swc) [browserify](https://github.com/substack/node-browserify) transform. Enables ES6/JSX/react for browserify times faster than babelify.
 
 ## Installation
 
