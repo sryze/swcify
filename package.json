@@ -29,5 +29,9 @@
   },
   "scripts": {
     "test": "tape test/*.js"
+  },
+  "dependencies": {
+    "inline-source-map-comment": "^1.0.5",
+    "source-map-to-comment": "^1.1.0"
   }
 }

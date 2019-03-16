@@ -5,8 +5,9 @@ var util   = require("util");
 var path   = require("path");
 var swc = require("@swc/core");
 var fs = require("fs");
+var inlineSourcemap = require('inline-source-map-comment')
 
-var defatuls = {
+var defaults = {
   "jsc": {
     "parser": {
       "syntax": "ecmascript",
@@ -47,6 +48,7 @@ var defatuls = {
 }
 
 module.exports = buildTransform();
+module.exports.defaults = defaults;
 module.exports.configure = buildTransform;
 
 
@@ -95,7 +97,9 @@ function buildTransform(opts) {
 
     // no config found, falling back to default options
     // create current config from options extended with the config
-    config = Object.assign({}, defatuls, opts, parsedConfig, config)
+    config = Object.assign({
+      sourceMaps: _flags.debug
+    }, defaults, opts, parsedConfig, config)
 
     // normalize config quirks
     if (!config.sourceMaps) delete config.sourceMaps
@@ -118,9 +122,12 @@ class SwcifyStream extends stream.Transform {
 
   _transform(buf, enc, callback) {
     var self = this
-
     swc.transform(buf.toString(), this._opts.config).then(function(result) {
       var code = result !== null ? result.code : data;
+
+      if (result.map) {
+        code += inlineSourcemap(result.map)
+      }
       self.push(code);
       self._code.push(code);
       self._sourceMap.push(result && result.map)
