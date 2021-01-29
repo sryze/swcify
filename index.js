@@ -114,34 +114,39 @@ function buildTransform(opts) {
 class SwcifyStream extends stream.Transform {
   constructor(opts) {
     super();
-    this._code = [];
+    this._data = [];
     this._sourceMap = [];
     if (!opts) opts = {}
     this._opts = opts;
   }
 
   _transform(buf, enc, callback) {
-    var self = this
-    swc.transform(buf.toString(), this._opts.config).then(function(result) {
+    this._data.push(buf);
+    callback();
+  }
+
+  _flush(callback) {
+    var self = this;
+
+    // Merge the buffer pieces after all are available, instead of one at a time,
+    // to avoid corrupting multibyte characters.
+    const data = Buffer.concat(this._data).toString();
+
+    swc.transform(data, this._opts.config).then(function(result) {
       var code = result !== null ? result.code : data;
 
       if (result.map) {
         code += inlineSourcemap(result.map)
       }
       self.push(code);
-      self._code.push(code);
       self._sourceMap.push(result && result.map)
-      callback();
-    }, callback)
-  }
 
-  _flush(callback) {
-    // Merge the buffer pieces after all are available, instead of one at a time,
-    // to avoid corrupting multibyte characters.
-    this.emit("swcify", {
-      code: this._code.join('')
-      // FIXME: how to join sourcemaps
-    }, this._opts.filename);
-    callback()
+      self.emit("swcify", {
+        code: code
+        // FIXME: how to join sourcemaps
+      }, self._opts.filename);
+
+      callback();
+    });
   }
 }
